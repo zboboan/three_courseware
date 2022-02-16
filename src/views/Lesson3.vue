@@ -29,9 +29,9 @@
   camera.position.z = 5;
 
   let boxGeometry=()=>{
-    var geometry = new BoxGeometry();
-    var material = new MeshBasicMaterial({color:0xff2288});
-    var cube = new Mesh(geometry,material);
+    let geometry = new BoxGeometry();
+    let material = new MeshBasicMaterial({color:0xff2288});
+    let cube = new Mesh(geometry,material);
     cube.rotation.x += 0.80;
     cube.rotation.y += 0.80;
     scene.add(cube);
