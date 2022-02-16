@@ -1,6 +1,7 @@
 <!-- 第一课 -->
 <template>
-  <div ref="le" ></div>
+  <!-- 我们将把 threejs 渲染效果显示在这个div  -->
+  <div ref="puidu_webgl_output" ></div> 
 </template>
 
 <script setup lang="ts">
@@ -24,7 +25,7 @@
     WebGLRenderer,
   } from 'three';
 
-  const le = ref();   // 整体容器
+  const puidu_webgl_output = ref();   // 整体容器
 
   const th = reactive({ 
     ctrl: new dat.GUI(),
@@ -90,7 +91,7 @@
 
   onMounted(()=>{
     
-    le.value.appendChild(th.renderer.domElement);
+    puidu_webgl_output.value.appendChild(th.renderer.domElement);
     
     window.addEventListener('resize',()=>{
       camera.aspect = window.innerWidth/window.innerHeight;

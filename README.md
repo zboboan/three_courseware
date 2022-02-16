@@ -12,8 +12,11 @@
 npm run serve
 ```
 
-### Compiles and minifies for production
+### 记住
 ```
-npm run build
+须要看那一课的效果，请在路由器里面改
+每次只运行一个three 运行多了会很卡
+
+views 存放的是每一课的代码
 ```
 
