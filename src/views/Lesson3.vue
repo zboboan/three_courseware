@@ -29,6 +29,7 @@
   camera.position.z = 5;
 
   let boxGeometry=()=>{
+    // 创建几何体
     let geometry = new BoxGeometry();
     let material = new MeshBasicMaterial({color:0xff2288});
     let cube = new Mesh(geometry,material);
