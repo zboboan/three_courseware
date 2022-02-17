@@ -5,6 +5,7 @@
 ```
   npm install @types/three -S    // 安装TS版 three
   npm install @types/dat.gui -S  //安装TS版  dat
+  npm install @types/stats -S  //安装TS版  stats
 ```
 
 ### 运行
