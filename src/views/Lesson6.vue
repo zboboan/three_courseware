@@ -21,6 +21,8 @@
     SpotLight, 
     Vector2, 
     WebGLRenderer,
+    Fog,
+    FogExp2,
   } from 'three';
 
   const puidu_webgl_output = ref();   // 整体容器
@@ -30,6 +32,9 @@
     renderer:new WebGLRenderer(), // 渲染器对象
   });
   const scene = new Scene();  // 场景对象Scene
+  // scene.fog = new Fog(0xff0000,1,100);
+  // scene.fog = new FogExp2(0x0000ff,0.02);
+  // scene.overrideMaterial = new MeshLambertMaterial({color:0x0000ff});
   // 渲染 场景
   th.renderer.setClearColor(new Color(0x000000));
   th.renderer.setSize(window.innerWidth,window.innerHeight);
@@ -63,18 +68,16 @@
     scene.add(ambienLight);
   }
 
-  let planeGeometryMain=()=>{
-    // 地面网格
-    let planeGeometry = new PlaneGeometry(100,100);
-    let planeMaterial = new MeshLambertMaterial({color:0xAAAAAA});
-    let plane = new Mesh(planeGeometry,planeMaterial);
+  // 地面网格
+  let planeGeometry = new PlaneGeometry(100,100);
+  let planeMaterial = new MeshLambertMaterial({color:0xAAAAAA});
+  let plane = new Mesh(planeGeometry,planeMaterial);
 
-    plane.rotation.x = -0.5 * Math.PI;
-    plane.position.set(15,0,0);
-    plane.receiveShadow = true;
+  plane.rotation.x = -0.5 * Math.PI;
+  plane.position.set(15,0,0);
+  plane.receiveShadow = true;
 
-    scene.add(plane);
-  }
+  scene.add(plane);
 
   // 创建几何体
   let geometry = new BoxGeometry(8,8,8);
@@ -90,15 +93,44 @@
   cube.position.z = 10;
   scene.add(cube);
 
-  planeGeometryMain();
+  let geometry2 = new BoxGeometry(4,4,4);
+  let material2 = new MeshLambertMaterial({color:0x00ff00});
+  let cube2 = new Mesh(geometry2,material2);
+  cube2.castShadow = true;
+
+  cube2.position.x = -10;
+  cube2.position.y = 10;
+  cube2.position.z = 0;
+  cube2.name = "cube2";
+  scene.add(cube2);
+
+  // console.log(scene.children);
+
+  let findObj = scene.getObjectByName("cube2",false);
+  console.log(findObj.position);
+
   light();
 
   let ctrlObj = {
-    rotationSpeed:0.01,
-    jumpSpeed:0.01,
+    removeFindCube(){
+      if(findObj instanceof Mesh){
+        scene.remove(findObj);
+      }
+    },
+    addNewCube(){
+      let geometryTemp = new BoxGeometry(4,4,4);
+      let materialTemp = new MeshLambertMaterial({color:0x0000ff});
+      let cubeTemp = new Mesh(geometryTemp,materialTemp);
+      cubeTemp.castShadow = true;
+
+      cubeTemp.position.x = -Math.random() * 10;
+      cubeTemp.position.y = Math.random() * 10;
+      cubeTemp.position.z = Math.random() * 10;
+      scene.add(cubeTemp);
+    },
   };
-  th.ctrl.add(ctrlObj,"rotationSpeed",0,1);
-  th.ctrl.add(ctrlObj,"jumpSpeed",0,1);
+  th.ctrl.add(ctrlObj,"removeFindCube");
+  th.ctrl.add(ctrlObj,"addNewCube");
 
   onMounted(()=>{
     puidu_webgl_output.value.appendChild(th.renderer.domElement);
@@ -118,14 +150,26 @@
     // cube.rotation.y += 0.01;
     // cube.rotation.z += 0.01;
 
-    cube.rotation.x += ctrlObj.rotationSpeed;
-    cube.rotation.y += ctrlObj.rotationSpeed;
-    cube.rotation.z += ctrlObj.rotationSpeed;
+    // cube2.rotation.x += 0.01;
+    // cube2.rotation.y += 0.01;
+    // cube2.rotation.z += 0.01;
+
+    // cube.rotation.x += ctrlObj.rotationSpeed;
+    // cube.rotation.y += ctrlObj.rotationSpeed;
+    // cube.rotation.z += ctrlObj.rotationSpeed;
 
     // gap.value += 0.01
-    gap.value += ctrlObj.jumpSpeed;
-    cube.position.x = 25 + (20 * (Math.sin(gap.value)));
-    cube.position.y = 6 + (20 * Math.abs(Math.cos(gap.value)));
+    // gap.value += ctrlObj.jumpSpeed;
+    // cube.position.x = 25 + (20 * (Math.sin(gap.value)));
+    // cube.position.y = 6 + (20 * Math.abs(Math.cos(gap.value)));
+
+    scene.traverse(obj=>{
+      if (obj instanceof Mesh && obj !=plane){
+        obj.rotation.x += 0.01;
+        obj.rotation.y += 0.01;
+        obj.rotation.z += 0.01;
+      }
+    })
 
     requestAnimationFrame(renderScene);
     th.renderer.render(scene,camera);
