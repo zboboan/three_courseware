@@ -78,16 +78,16 @@
   scene.add(plane);
 
   // 创建几何体
-  for (let i = 0;i < (planeGeometry.parameters.height / 5);i++){
-    for (let j = 0;j < (planeGeometry.parameters.width / 5);j++){
+  for (let i=0;i<(planeGeometry.parameters.height/5);i++){
+    for (let j=0;j<(planeGeometry.parameters.width/5);j++){
       let cubeGeo = new BoxGeometry(4,4,4);
       let cubeMaterial = new MeshLambertMaterial();
       cubeMaterial.color = new Color(0,Math.random() * 0.25 + 0.5,0);
       let cube = new Mesh(cubeGeo,cubeMaterial);
 
-      cube.position.x = -(planeGeometry.parameters.width / 2) + 15 + (i * 5);
+      cube.position.x = -(planeGeometry.parameters.width/2)+15+(i*5);
       cube.position.y = 2;
-      cube.position.z = -(planeGeometry.parameters.height / 2) + 5 + (j * 5);
+      cube.position.z = -(planeGeometry.parameters.height/2)+5+(j*5);
 
       scene.add(cube);
     }
