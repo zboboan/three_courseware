@@ -142,7 +142,7 @@ let ctrlObj = {
 
   // MARK: renderScene
   let renderScene=():void=>{
-    pos.value += 0.01;
+    // pos.value += 0.01;
     cube.position.x = 10 + (100 * (Math.sin(pos.value)));
     camera.lookAt(cube.position);
     requestAnimationFrame(renderScene);
