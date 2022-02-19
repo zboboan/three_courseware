@@ -35,6 +35,7 @@
   // scene.fog = new Fog(0xff0000,1,100);
   // scene.fog = new FogExp2(0x0000ff,0.02);
   // scene.overrideMaterial = new MeshLambertMaterial({color:0x0000ff});
+  
   // 渲染 场景
   th.renderer.setClearColor(new Color(0x000000));
   th.renderer.setSize(window.innerWidth,window.innerHeight);
@@ -106,7 +107,7 @@
 
   // console.log(scene.children);
 
-  let findObj = scene.getObjectByName("cube2",false);
+  let findObj:any = scene.getObjectByName("cube2");
   console.log(findObj.position);
 
   light();
