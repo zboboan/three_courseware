@@ -1,4 +1,4 @@
-<!-- 第六课 -->
+<!-- 第八课 -->
 <template>
   <!-- 我们将把 threejs 渲染效果显示在这个div  -->
   <div ref="puidu_webgl_output" ></div> 
@@ -15,14 +15,13 @@
     Color,
     Mesh,
     MeshLambertMaterial,
+    OrthographicCamera,
     PerspectiveCamera,
     PlaneGeometry,
     Scene, 
     SpotLight, 
     Vector2, 
     WebGLRenderer,
-    Fog,
-    FogExp2,
   } from 'three';
 
   const puidu_webgl_output = ref();   // 整体容器
@@ -32,9 +31,6 @@
     renderer:new WebGLRenderer(), // 渲染器对象
   });
   const scene = new Scene();  // 场景对象Scene
-  // scene.fog = new Fog(0xff0000,1,100);
-  // scene.fog = new FogExp2(0x0000ff,0.02);
-  // scene.overrideMaterial = new MeshLambertMaterial({color:0x0000ff});
   
   // 渲染 场景
   th.renderer.setClearColor(new Color(0x000000));
@@ -45,7 +41,8 @@
   scene.add(axes); // 坐标轴长度
   
   // 影相机
-  let camera = new PerspectiveCamera(75,window.innerWidth / window.innerHeight,0.1,1000); //透视相机
+  // let camera = new PerspectiveCamera(75,window.innerWidth / window.innerHeight,0.1,1000); //透视相机
+  let camera:any = new OrthographicCamera(window.innerWidth/-8,window.innerWidth/8,window.innerHeight/8,window.innerHeight/-8,50,100);
   camera.position.x = -30;
   camera.position.y = 45;
   camera.position.z = 35;
@@ -81,58 +78,54 @@
   scene.add(plane);
 
   // 创建几何体
+  for (let i = 0;i < (planeGeometry.parameters.height / 5);i++){
+    for (let j = 0;j < (planeGeometry.parameters.width / 5);j++){
+      let cubeGeo = new BoxGeometry(4,4,4);
+      let cubeMaterial = new MeshLambertMaterial();
+      cubeMaterial.color = new Color(0,Math.random() * 0.25 + 0.5,0);
+      let cube = new Mesh(cubeGeo,cubeMaterial);
+
+      cube.position.x = -(planeGeometry.parameters.width / 2) + 15 + (i * 5);
+      cube.position.y = 2;
+      cube.position.z = -(planeGeometry.parameters.height / 2) + 5 + (j * 5);
+
+      scene.add(cube);
+    }
+  }
+
+let ctrlObj = {
+  showText:"透视投影摄像机",
+  changeCamera(){
+    if (camera instanceof PerspectiveCamera){
+      camera = new OrthographicCamera(window.innerWidth/-16,window.innerWidth/16,window.innerHeight/16,window.innerHeight/-16,-200,500);
+      camera.position.x = -30;
+      camera.position.y = 40;
+      camera.position.z = 30;
+      camera.lookAt(scene.position);
+      this.showText = "正交投影摄像机";
+    }else{
+      camera = new PerspectiveCamera(75,window.innerWidth / window.innerHeight,0.1,1000);
+      camera.position.x = -30;
+      camera.position.y = 40;
+      camera.position.z = 30;
+      camera.lookAt(scene.position);
+      this.showText = "透视投影摄像机";
+    }
+  }
+}
+
+  th.ctrl.add(ctrlObj,"showText").listen();
+  th.ctrl.add(ctrlObj,"changeCamera");
+
   let geometry = new BoxGeometry(8,8,8);
   let material = new MeshLambertMaterial({color:0xff2288});
   let cube = new Mesh(geometry,material);
-  cube.castShadow = true;
-  cube.rotation.x += 0.80;
-  cube.rotation.y += 0.80;
-  
-
-  cube.position.x = 4;
+  cube.position.x = 0;
   cube.position.y = 8;
-  cube.position.z = 10;
+  cube.position.z = 0;
   scene.add(cube);
 
-  let geometry2 = new BoxGeometry(4,4,4);
-  let material2 = new MeshLambertMaterial({color:0x00ff00});
-  let cube2 = new Mesh(geometry2,material2);
-  cube2.castShadow = true;
-
-  cube2.position.x = -10;
-  cube2.position.y = 10;
-  cube2.position.z = 0;
-  cube2.name = "cube2";
-  scene.add(cube2);
-
-  // console.log(scene.children);
-
-  let findObj:any = scene.getObjectByName("cube2");
-  console.log(findObj.position);
-
-  light();
-
-  let ctrlObj = {
-    removeFindCube(){
-      if(findObj instanceof Mesh){
-        scene.remove(findObj);
-      }
-    },
-    addNewCube(){
-      let geometryTemp = new BoxGeometry(4,4,4);
-      let materialTemp = new MeshLambertMaterial({color:0x0000ff});
-      let cubeTemp = new Mesh(geometryTemp,materialTemp);
-      cubeTemp.castShadow = true;
-
-      cubeTemp.position.x = -Math.random() * 10;
-      cubeTemp.position.y = Math.random() * 10;
-      cubeTemp.position.z = Math.random() * 10;
-      scene.add(cubeTemp);
-    },
-  };
-  th.ctrl.add(ctrlObj,"removeFindCube");
-  th.ctrl.add(ctrlObj,"addNewCube");
-
+  
   onMounted(()=>{
     puidu_webgl_output.value.appendChild(th.renderer.domElement);
 
@@ -143,35 +136,15 @@
     },false);
   });
 
-  let gap =ref(0);
+  light();
+
+  let pos = ref(0);
 
   // MARK: renderScene
   let renderScene=():void=>{
-    // cube.rotation.x += 0.01;
-    // cube.rotation.y += 0.01;
-    // cube.rotation.z += 0.01;
-
-    // cube2.rotation.x += 0.01;
-    // cube2.rotation.y += 0.01;
-    // cube2.rotation.z += 0.01;
-
-    // cube.rotation.x += ctrlObj.rotationSpeed;
-    // cube.rotation.y += ctrlObj.rotationSpeed;
-    // cube.rotation.z += ctrlObj.rotationSpeed;
-
-    // gap.value += 0.01
-    // gap.value += ctrlObj.jumpSpeed;
-    // cube.position.x = 25 + (20 * (Math.sin(gap.value)));
-    // cube.position.y = 6 + (20 * Math.abs(Math.cos(gap.value)));
-
-    scene.traverse(obj=>{
-      if (obj instanceof Mesh && obj !=plane){
-        obj.rotation.x += 0.01;
-        obj.rotation.y += 0.01;
-        obj.rotation.z += 0.01;
-      }
-    })
-
+    pos.value += 0.01;
+    cube.position.x = 10 + (100 * (Math.sin(pos.value)));
+    camera.lookAt(cube.position);
     requestAnimationFrame(renderScene);
     th.renderer.render(scene,camera);
   }
