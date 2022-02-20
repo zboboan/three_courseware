@@ -195,7 +195,8 @@
       2,20,5,
       //第十个面
       10,10,10,
-      10,10,0, 
+      10,10,0,
+      2,20,5,
   ])
 
   let attribute = new BufferAttribute(vertices,3);
@@ -208,7 +209,9 @@
   let mesh = new Mesh(geometryCustom,materialCustom);
   // scene.add(mesh);
 
+  console.log(geometryCustom);
   let wireFrame = new WireframeGeometry(geometryCustom);
+  console.log(wireFrame);
   let line:any = new LineSegments(wireFrame);
   line.material.depthTest = false;
   // line.material.transparent = false;
